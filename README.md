@@ -1,10 +1,10 @@
 # SymfonyCommander
 
-**_SymfonyCommnader is a small Sublime Text 2 package that transforms your editor of choice into a lightweight Symfony 2 IDE_**
+**_SymfonyCommnader is a small Sublime Text package that transforms your editor of choice into a lightweight Symfony 2 IDE_**
 
 Get an overview of SymfonyCommander on the [project page](http://www.pd-digital.de/symfonycommander/).
 
-This [Sublime Text 2](http://sublimetext.com/) package integrates the most common [Symfony 2](http://www.symfony.com) console commands right into your _lovely editor of choice &trade;_.
+This [Sublime Text](http://sublimetext.com/) package integrates the most common [Symfony 2](http://www.symfony.com) console commands right into your _lovely editor of choice &trade;_.
 Additional you get some great little helpers for writing Symfony2 code.
 
 It provides the following features:
@@ -30,6 +30,11 @@ If you want to be informed about new versions of this plugin just watch this rep
 If you need some Symfony code snippets in addition to this package just install [sublime-symfony2](https://github.com/raulfraile/sublime-symfony2). It is a great package for speed up your Symfony 2 development as well.
 
 ## Changelog
+
+**2015-08-10**
+
+- Modified the code to work also with Sublime Text 3
+- Modified the code to work on Unix aswell as Windows environments 
 
 **2012-09-22** (1.2.2)
 
@@ -116,24 +121,19 @@ To flush the cache just call the command `SymfonyCommander Flush Cache` over the
 
 ## Install
 
-### Installation with Package Control (recommended)
-
-1. The easiest way to install SymfonyCommander is through Package Control, which can be found [here](http://wbond.net/sublime_packages/package_control).
-
-2. After the installation of Package Control bring up the Command Palette (`Command+Shift+P` on OS X, `Control+Shift+P` otherwise). Select "Package Control: Install Package" and wait until the list with all available packages will appear. 
-
-3. Than select "SymfonyCommander". 
-
-Package Control will automatically keep SymfonyCommander up to date with the latest version.
-
-
 ### Installation with git
 
 Clone this repository in your Sublime Packages directory which you can find here:
 
+For Sublime Text 2:
 - OS X : `~/Library/Application Support/Sublime Text 2/Packages/`
 - Linux: `~/.Sublime Text 2/Packages/`
 - Windows: `%APPDATA%/Sublime Text 2/Packages/`
+
+For Sublime Text 3:
+- OS X : `~/Library/Application Support/Sublime Text 3/Packages/`
+- Linux: `~/.Sublime Text 3/Packages/`
+- Windows: `%APPDATA%/Sublime Text 3/Packages/`
 
 ## Configuration
 
