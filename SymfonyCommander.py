@@ -21,6 +21,7 @@
 # DEALINGS IN THE SOFTWARE.
 import os
 import os.path
+import platform
 import subprocess
 import sublime
 import sublime_plugin
@@ -132,13 +133,14 @@ class SymfonyCommanderBase:
             if not quiet:
                 self.output("Can't find the root directory of the symfony project. Please have a look at the README. You can find it here: https://github.com/pdaether/Sublime-SymfonyCommander")
             return
-        os.chdir(self.base_directory)
         # CMD:
         if not self.php_command:
-            command = "php app/console --no-ansi " + command
+            command = "php app/console " + command
         else:
-            command = self.php_command + " app/console --no-ansi " + command
-        result, e = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True, cwd=self.base_directory).communicate()
+            command = self.php_command + " " + self.base_directory + "app/console " + command
+        shell = platform.system() != 'Windows'
+        p = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=shell, creationflags=subprocess.SW_HIDE)
+        result, e = p.communicate()
         if e:
             return e
         else:
@@ -151,9 +153,10 @@ class SymfonyCommanderBase:
         if not self.base_directory:
             self.output("Can't find the root directory of the symfony project. Please have a look at the README. You can find it here: https://github.com/pdaether/Sublime-SymfonyCommander")
             return
-        os.chdir(self.base_directory)
-        command = "phpunit " + command
-        result, e = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True, cwd=self.base_directory).communicate()
+        command = "phpunit " + self.base_directory + command
+        shell = platform.system() != 'Windows'
+        p = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=shell, creationflags=subprocess.SW_HIDE)
+        result, e = p.communicate()
         if e:
             return e
         else:
@@ -273,7 +276,9 @@ class SymfonyCommanderBase:
         SymfonyCommanderBase.common_snippets[self.base_directory] = []
 
     def output(self, value):
-        self.multi_line_output(value)
+        # self.multi_line_output(value)
+        value = value.decode('utf-8')
+        self.view.run_command('symfony_commander_output', {"value": value})
 
     def multi_line_output(self, value, panel_name='SymfonyCommander'):
         # Create the output Panel
@@ -300,7 +305,17 @@ class SymfonyCommanderBase:
 
     def is_enabled(self):
         self.loadSettings()
-        return self.base_directory
+        return bool(self.base_directory)
+
+class SymfonyCommanderOutputCommand(sublime_plugin.TextCommand):
+    def run(self, edit, value, panel_name="SymfonyCommander"):
+        # Create the output Panel
+        panel = self.view.window().get_output_panel(panel_name)
+        panel.set_read_only(False)
+        panel.set_syntax_file('Packages/Text/Plain text.tmLanguage')
+        panel.insert(edit, panel.size(), str(value))
+        panel.set_read_only(True)
+        self.view.window().run_command("show_panel", {"panel": "output." + panel_name})
 
 
 class SymfonyCommander(SymfonyCommanderBase, sublime_plugin.TextCommand):
@@ -324,6 +339,7 @@ class SymfonyCommanderClearCacheCommand(SymfonyCommander):
 class SymfonyCommanderExecuteCommand(SymfonyCommander):
     def run(self, edit, command):
         result = self.callSymfony(command)
+        result = result
         if result:
             self.output(result)
 
@@ -576,7 +592,7 @@ class SymfonyCommanderRunTestCommand(sublime_plugin.TextCommand, SymfonyCommande
 
     def is_enabled(self):
         self.loadSettings()
-        return self.base_directory
+        return bool(self.base_directory)
 
 
 class SymfonyCommanderRunTestBundleCommand(sublime_plugin.TextCommand, SymfonyCommanderBase):
@@ -587,4 +603,4 @@ class SymfonyCommanderRunTestBundleCommand(sublime_plugin.TextCommand, SymfonyCo
 
     def is_enabled(self):
         self.loadSettings()
-        return self.getCurrentBundleFolder()
+        return bool(self.getCurrentBundleFolder())
