@@ -135,7 +135,7 @@ class SymfonyCommanderBase:
             return
         # CMD:
         if not self.php_command:
-            command = "php app/console " + command
+            command = "php " + self.base_directory + " app/console " + command
         else:
             command = self.php_command + " " + self.base_directory + "app/console " + command
         shell = platform.system() != 'Windows'
